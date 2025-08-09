@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Publicidade Online - Planos de Pagamento</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    margin: 0; padding: 0;
+    color: #333;
+  }
+  header {
+    background: #0077cc;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  main {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+  h1, h2 {
+    margin-bottom: 15px;
+  }
+  form {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    margin-bottom: 40px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+  }
+  input[type="text"], input[type="url"], textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+  textarea {
+    min-height: 80px;
+  }
+  .plans {
+    margin-bottom: 15px;
+  }
+  .plan-option {
+    margin-bottom: 10px;
+  }
+  #paypal-button-container {
+    margin-top: 10px;
+  }
+  .ads-list {
+    margin-bottom: 60px;
+  }
+  .ad-item {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  .ad-item h3 {
+    margin: 0 0 8px 0;
+  }
+  .ad-item p {
+    margin: 0 0 6px 0;
+  }
+  .ad-item a {
+    color: #0077cc;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .ad-item a:hover {
+    text-decoration: underline;
+  }
+  footer {
+    background: #0077cc;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Publicidade Online</h1>
+  <p>Escolha seu plano e publique sua marca ou produto!</p>
+</header>
+<main>
+  <section class="ads-list" id="ads-list">
+    <h2>Anúncios Publicados</h2>
+    <p id="no-ads-msg">Nenhum anúncio publicado ainda.</p>
+  </section>
+
+  <section class="publish-form">
+    <h2>Publique seu Anúncio</h2>
+    <form id="adForm">
+      <label for="brandName">Nome da Marca / Produto</label>
+      <input type="text" id="brandName" name="brandName" required />
+
+      <label for="websiteUrl">URL do Site ou Rede Social</label>
+      <input type="url" id="websiteUrl" name="websiteUrl" placeholder="https://exemplo.com" required />
+
+      <label for="description">Descrição do Anúncio</label>
+      <textarea id="description" name="description" maxlength="300" placeholder="Descreva seu produto ou marca..." required></textarea>
+
+      <div class="plans">
+        <p><strong>Escolha o plano:</strong></p>
+        <div class="plan-option">
+          <input type="radio" id="bronze" name="plan" value="30.00" checked />
+          <label for="bronze">Bronze - R$ 30,00 (Anúncio básico)</label>
+        </div>
+        <div class="plan-option">
+          <input type="radio" id="prata" name="plan" value="50.00" />
+          <label for="prata">Prata - R$ 50,00 (Anúncio com destaque)</label>
+        </div>
+        <div class="plan-option">
+          <input type="radio" id="ouro" name="plan" value="80.00" />
+          <label for="ouro">Ouro - R$ 80,00 (Anúncio premium + destaque na home)</label>
+        </div>
+      </div>
+
+      <div id="paypal-button-container"></div>
+    </form>
+  </section>
+</main>
+<footer>
+  &copy; 2025 Publicidade Online
+</footer>
+
+<!-- SDK do PayPal - ambiente Sandbox de teste -->
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=BRL"></script>
+
+<script>
+  const adForm = document.getElementById('adForm');
+  const adsList = document.getElementById('ads-list');
+  const noAdsMsg = document.getElementById('no-ads-msg');
+
+  let ads = [];
+
+  function renderAds() {
+    if (ads.length === 0) {
+      noAdsMsg.style.display = 'block';
+      return;
+    }
+    noAdsMsg.style.display = 'none';
+    adsList.querySelectorAll('.ad-item').forEach(item => item.remove());
+
+    // Para mostrar o anúncio Ouro com destaque, por exemplo, podemos estilizar diferente
+    ads.forEach((ad) => {
+      const div = document.createElement('div');
+      div.className = 'ad-item';
+
+      if (ad.plan === '80.00') {
+        div.style.border = '3px solid gold';
+        div.style.background = '#fffbe6';
+      } else if (ad.plan === '50.00') {
+        div.style.border = '2px solid silver';
+        div.style.background = '#f9f9f9';
+      } else {
+        div.style.border = '1px solid #ddd';
+      }
+
+      const title = document.createElement('h3');
+      title.textContent = ad.brandName;
+      div.appendChild(title);
+
+      const desc = document.createElement('p');
+      desc.textContent = ad.description;
+      div.appendChild(desc);
+
+      const link = document.createElement('a');
+      link.href = ad.websiteUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'Visitar Site';
+      div.appendChild(link);
+
+      adsList.appendChild(div);
+    });
+  }
+
+  renderAds();
+
+  paypal.Buttons({
+    style: {
+      shape: 'rect',
+      color: 'blue',
+      layout: 'vertical',
+      label: 'pay'
+    },
+    onClick: function(data, actions) {
+      if (!adForm.checkValidity()) {
+        adForm.reportValidity();
+        return actions.reject();
+      }
+      return actions.resolve();
+    },
+    createOrder: function(data, actions) {
+      // Pega o plano selecionado
+      const selectedPlan = adForm.plan.value;
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: selectedPlan
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        const brandName = adForm.brandName.value.trim();
+        const websiteUrl = adForm.websiteUrl.value.trim();
+        const description = adForm.description.value.trim();
+        const plan = adForm.plan.value;
+
+        ads.push({ brandName, websiteUrl, description, plan });
+        renderAds();
+
+        alert('Pagamento aprovado! Seu anúncio foi publicado com sucesso.');
+
+        adForm.reset();
+      });
+    },
+    onError: function (err) {
+      alert('Ocorreu um erro no pagamento. Tente novamente.');
+      console.error(err);
+    }
+  }).render('#paypal-button-container');
+</script>
+</body>
+</html>
